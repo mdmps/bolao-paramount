@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolão Copa do Mundo - Paramount Têxteis</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/react.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/react-dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg-primary: #ffffff;
+            --color-bg-secondary: #f5f5f5;
+            --color-text-primary: #1a1a1a;
+            --color-text-secondary: #666666;
+            --color-border: #e0e0e0;
+            --color-green: #1a7e3a;
+            --color-green-light: #639922;
+            --color-orange: #c9960a;
+            --color-success: #27500a;
+            --color-info: #185FA5;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg-primary: #1a1a1a;
+                --color-bg-secondary: #2d2d2d;
+                --color-text-primary: #ffffff;
+                --color-text-secondary: #b0b0b0;
+                --color-border: #404040;
+            }
+        }
+
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+        }
+
+        body {
+            line-height: 1.6;
+        }
+
+        input, button, select {
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-green);
+            box-shadow: 0 0 0 3px rgba(26, 126, 58, 0.1);
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        #root {
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
+
+        .card {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin: 0.25rem 0 0 0;
+        }
+
+        .badge {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .badge-open {
+            background: rgba(24, 95, 165, 0.1);
+            color: var(--color-info);
+        }
+
+        .badge-closed {
+            background: rgba(39, 80, 10, 0.1);
+            color: var(--color-success);
+        }
+
+        .game-score {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: var(--color-bg-secondary);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+            font-size: 18px;
+        }
+
+        .game-score span:nth-child(2) {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            font-weight: normal;
+        }
+
+        .bet-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .bet-input-group > div {
+            flex: 0 0 auto;
+        }
+
+        .bet-input-group label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .bet-input-group input {
+            width: 60px;
+        }
+
+        .bet-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: rgba(99, 153, 34, 0.1);
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 0.75rem;
+        }
+
+        .ranking-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+
+        .ranking-item.current-user {
+            background: rgba(99, 153, 34, 0.05);
+        }
+
+        .ranking-position {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .ranking-position span:first-child {
+            font-size: 18px;
+            min-width: 24px;
+        }
+
+        .ranking-points {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--color-info);
+        }
+
+        .login-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+
+        .login-box {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-box > div:first-child {
+            font-size: 48px;
+            margin-bottom: 1rem;
+        }
+
+        .login-box h1 {
+            font-size: 24px;
+            font-weight: 500;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .login-box p {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+
+        .login-form {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .login-form input {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 1rem;
+            color: white;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1a7e3a 0%, #639922 100%);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1a7e3a 0%, #639922 100%);
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-text-secondary);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #b87c1a 0%, #c9960a 100%);
+        }
+
+        .btn-success {
+            background: rgba(39, 80, 10, 0.8);
+            color: white;
+        }
+
+        .btn-info {
+            background: rgba(24, 95, 165, 0.8);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .info-box {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 2rem;
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+
+        .info-box p {
+            margin: 0 0 0.5rem 0;
+            font-weight: 500;
+            color: var(--color-text-primary);
+        }
+
+        .info-box ul {
+            margin: 0;
+            padding-left: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .info-box li {
+            margin-bottom: 0.25rem;
+        }
+
+        .info-box strong {
+            color: var(--color-text-primary);
+        }
+
+        h2 {
+            font-size: 16px;
+            font-weight: 500;
+            margin: 1.5rem 0 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function BolaoApp() {
+            const [user, setUser] = useState(null);
+            const [adminMode, setAdminMode] = useState(false);
+            const [userName, setUserName] = useState('');
+            const [adminPassword, setAdminPassword] = useState('');
+            const [showAdminLogin, setShowAdminLogin] = useState(false);
+
+            const [games, setGames] = useState([
+                { id: 1, name: 'Brasil x Sérvia', status: 'open', userBet: null, result: null },
+                { id: 2, name: 'Alemanha x Espanha', status: 'open', userBet: null, result: null },
+                { id: 3, name: 'Inglaterra x Irã', status: 'open', userBet: null, result: null }
+            ]);
+
+            const [bets, setBets] = useState([]);
+            const [editingGameId, setEditingGameId] = useState(null);
+            const [editScore, setEditScore] = useState({ home: '', away: '' });
+
+            const loginUser = () => {
+                if (userName.trim()) {
+                    setUser({ name: userName });
+                    setUserName('');
+                }
+            };
+
+            const loginAdmin = () => {
+                if (adminPassword === 'admin123') {
+                    setAdminMode(true);
+                    setAdminPassword('');
+                    setShowAdminLogin(false);
+                }
+            };
+
+            const logout = () => {
+                setUser(null);
+                setAdminMode(false);
+            };
+
+            const placeBet = (gameId, homeScore, awayScore) => {
+                if (!homeScore || !awayScore) return;
+                
+                const existingBetIndex = bets.findIndex(b => b.gameId === gameId && b.user === user.name);
+                const newBet = {
+                    id: Date.now(),
+                    gameId,
+                    user: user.name,
+                    homeScore: parseInt(homeScore),
+                    awayScore: parseInt(awayScore),
+                    points: 0
+                };
+
+                if (existingBetIndex >= 0) {
+                    const updatedBets = [...bets];
+                    updatedBets[existingBetIndex] = newBet;
+                    setBets(updatedBets);
+                } else {
+                    setBets([...bets, newBet]);
+                }
+
+                const updatedGames = games.map(g => 
+                    g.id === gameId ? { ...g, userBet: newBet } : g
+                );
+                setGames(updatedGames);
+            };
+
+            const calculatePoints = (userBet, result) => {
+                if (!userBet || !result) return 0;
+                if (userBet.homeScore === result.homeScore && userBet.awayScore === result.awayScore) return 5;
+                if ((userBet.homeScore > userBet.awayScore) === (result.homeScore > result.awayScore)) return 3;
+                return 0;
+            };
+
+            const submitResult = (gameId, homeScore, awayScore) => {
+                const updatedGames = games.map(g => {
+                    if (g.id === gameId) {
+                        return {
+                            ...g,
+                            status: 'finished',
+                            result: { homeScore: parseInt(homeScore), awayScore: parseInt(awayScore) }
+                        };
+                    }
+                    return g;
+                });
+                setGames(updatedGames);
+                
+                const updatedBets = bets.map(bet => {
+                    if (bet.gameId === gameId) {
+                        return {
+                            ...bet,
+                            points: calculatePoints(bet, { homeScore: parseInt(homeScore), awayScore: parseInt(awayScore) })
+                        };
+                    }
+                    return bet;
+                });
+                setBets(updatedBets);
+                setEditingGameId(null);
+            };
+
+            const getRanking = () => {
+                const ranking = {};
+                bets.forEach(bet => {
+                    if (!ranking[bet.user]) ranking[bet.user] = 0;
+                    ranking[bet.user] += bet.points;
+                });
+                return Object.entries(ranking)
+                    .map(([name, points]) => ({ name, points }))
+                    .sort((a, b) => b.points - a.points);
+            };
+
+            // LOGIN
+            if (!user && !adminMode) {
+                return (
+                    <div className="login-container">
+                        <div className="login-box">
+                            <div>⚽</div>
+                            <h1>Bolão Copa do Mundo</h1>
+                            <p>Paramount Têxteis - Junho 2026</p>
+                        </div>
+
+                        {!showAdminLogin && (
+                            <div className="login-form">
+                                <label>Nome do colaborador</label>
+                                <input
+                                    type="text"
+                                    placeholder="Seu nome completo"
+                                    value={userName}
+                                    onChange={(e) => setUserName(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && loginUser()}
+                                />
+                                <button className="btn-primary" onClick={loginUser}>
+                                    Entrar no Bolão
+                                </button>
+                                <button className="btn-secondary" onClick={() => setShowAdminLogin(true)}>
+                                    Acesso Admin
+                                </button>
+                            </div>
+                        )}
+
+                        {showAdminLogin && (
+                            <div className="login-form">
+                                <label>Senha Admin</label>
+                                <input
+                                    type="password"
+                                    placeholder="Digite a senha"
+                                    value={adminPassword}
+                                    onChange={(e) => setAdminPassword(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && loginAdmin()}
+                                />
+                                <button className="btn-danger" onClick={loginAdmin}>
+                                    Acessar Painel Admin
+                                </button>
+                                <button className="btn-secondary" onClick={() => setShowAdminLogin(false)}>
+                                    Voltar
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+
+            // ADMIN MODE
+            if (adminMode) {
+                const ranking = getRanking();
+                return (
+                    <div className="container">
+                        <div className="header">
+                            <h1>🔧 Painel Admin</h1>
+                            <button className="btn-secondary btn-small" onClick={logout}>
+                                Sair
+                            </button>
+                        </div>
+
+                        <h2>Resultados dos Jogos</h2>
+                        {games.map((game) => (
+                            <div key={game.id} className="card">
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                                    <p style={{ fontWeight: 500, fontSize: '15px', margin: 0 }}>{game.name}</p>
+                                    {game.status === 'finished' && (
+                                        <span className="badge badge-closed">
+                                            Resultado: {game.result.homeScore} x {game.result.awayScore}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {editingGameId !== game.id && game.status === 'open' && (
+                                    <button className="btn-info btn-small" onClick={() => {
+                                        setEditingGameId(game.id);
+                                        setEditScore({ home: '', away: '' });
+                                    }}>
+                                        Registrar resultado
+                                    </button>
+                                )}
+
+                                {editingGameId === game.id && (
+                                    <div className="bet-input-group">
+                                        <div>
+                                            <label>Home</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                value={editScore.home}
+                                                onChange={(e) => setEditScore({ ...editScore, home: e.target.value })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label>Away</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                value={editScore.away}
+                                                onChange={(e) => setEditScore({ ...editScore, away: e.target.value })}
+                                            />
+                                        </div>
+                                        <button className="btn-success btn-small" onClick={() => submitResult(game.id, editScore.home, editScore.away)}>
+                                            Salvar
+                                        </button>
+                                        <button className="btn-secondary btn-small" onClick={() => setEditingGameId(null)}>
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+
+                        <h2>Ranking em Tempo Real</h2>
+                        <div className="card">
+                            {ranking.length === 0 ? (
+                                <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                                    Nenhuma aposta ainda...
+                                </div>
+                            ) : (
+                                ranking.map((entry, idx) => (
+                                    <div key={idx} className="ranking-item">
+                                        <div className="ranking-position">
+                                            <span>{idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}</span>
+                                            <span style={{ fontWeight: idx === 0 ? 600 : 500 }}>{entry.name}</span>
+                                        </div>
+                                        <span className="ranking-points">{entry.points} pts</span>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+
+            // USER MODE
+            return (
+                <div className="container">
+                    <div className="header">
+                        <div>
+                            <h1>⚽ Bolão Copa do Mundo</h1>
+                            <p>Bem-vindo, {user.name}!</p>
+                        </div>
+                        <button className="btn-secondary btn-small" onClick={logout}>
+                            Sair
+                        </button>
+                    </div>
+
+                    <div>
+                        <h2>🏆 Ranking Top 5</h2>
+                        <div className="card">
+                            {getRanking().slice(0, 5).length === 0 ? (
+                                <div style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                                    Faça sua primeira aposta!
+                                </div>
+                            ) : (
+                                getRanking().slice(0, 5).map((entry, idx) => (
+                                    <div key={idx} className={`ranking-item ${entry.name === user.name ? 'current-user' : ''}`}>
+                                        <div className="ranking-position">
+                                            <span>{idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}</span>
+                                            <span style={{ fontWeight: idx === 0 ? 600 : 500 }}>
+                                                {entry.name}
+                                                {entry.name === user.name && ' (você)'}
+                                            </span>
+                                        </div>
+                                        <span className="ranking-points">{entry.points} pts</span>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+
+                    <h2>Seus Palpites</h2>
+                    {games.map((game, idx) => {
+                        const [homeInput, setHomeInput] = useState('');
+                        const [awayInput, setAwayInput] = useState('');
+                        const userBet = bets.find(b => b.gameId === game.id && b.user === user.name);
+
+                        return (
+                            <div key={game.id} className="card">
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                                    <p style={{ fontWeight: 500, fontSize: '15px', margin: 0, color: 'var(--color-text-primary)' }}>
+                                        Jogo {idx + 1}: {game.name}
+                                    </p>
+                                    <span className={`badge ${game.status === 'open' ? 'badge-open' : 'badge-closed'}`}>
+                                        {game.status === 'open' ? '⚽ Aberto' : '✓ Finalizado'}
+                                    </span>
+                                </div>
+
+                                {game.status === 'finished' && game.result && (
+                                    <div className="game-score">
+                                        <span>{game.result.homeScore}</span>
+                                        <span>Resultado</span>
+                                        <span>{game.result.awayScore}</span>
+                                    </div>
+                                )}
+
+                                {userBet ? (
+                                    <div className="bet-display">
+                                        <span style={{ color: 'var(--color-text-secondary)' }}>Sua aposta:</span>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <span style={{ fontWeight: 500, fontSize: '16px' }}>{userBet.homeScore} x {userBet.awayScore}</span>
+                                            {game.status === 'finished' && (
+                                                <span style={{
+                                                    fontWeight: 500,
+                                                    color: userBet.points > 0 ? 'var(--color-success)' : 'var(--color-text-secondary)',
+                                                    fontSize: '14px'
+                                                }}>
+                                                    +{userBet.points} pts
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ) : null}
+
+                                {game.status === 'open' && !userBet && (
+                                    <div className="bet-input-group">
+                                        <div>
+                                            <label>Home</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="10"
+                                                placeholder="0"
+                                                onChange={(e) => setHomeInput(e.target.value)}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label>Away</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="10"
+                                                placeholder="0"
+                                                onChange={(e) => setAwayInput(e.target.value)}
+                                            />
+                                        </div>
+                                        <button className="btn-primary btn-small" onClick={() => placeBet(game.id, homeInput, awayInput)}>
+                                            Apostar
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+
+                    <div className="info-box">
+                        <p>📋 Como funciona:</p>
+                        <ul>
+                            <li>Aposte no placar correto dos 3 primeiros jogos da Copa</li>
+                            <li><strong>Placar correto:</strong> 5 pontos</li>
+                            <li><strong>Resultado correto:</strong> 3 pontos (vitória/derrota)</li>
+                            <li>Os vencedores serão premiados ao final dos 3 jogos!</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<BolaoApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
